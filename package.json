@@ -2,7 +2,7 @@
   "name": "ngenit-backend",
   "version": "1.0.0",
   "description": "NGEN IT AI Services Backend API",
-  "main": "dist/app.js",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc",
