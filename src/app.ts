@@ -6,9 +6,21 @@ import dotenv from 'dotenv';
 import path from 'path';
 import mongoose from 'mongoose';
 
-import heroRoutes from './routes/heroRoutes';
-import trustBarRoutes from './routes/trustBarRoutes';
 import authRoutes from './routes/authRoutes';
+import heroRoutes from './routes/heroRoutes';
+import serviceRoutes from './routes/serviceRoutes';
+import trustBarRoutes from './routes/trustBarRoutes';
+import industryRoutes from './routes/industryRoutes';
+import useCaseRoutes from './routes/useCaseRoutes';
+import outcomeRoutes from './routes/outcomeRoutes';
+import methodologyRoutes from './routes/methodologyRoutes';
+import solutionRoutes from './routes/solutionRoutes';
+import whyNgenRoutes from './routes/whyNgenRoutes';
+import ctaBannerRoutes from './routes/ctaBannerRoutes';
+import contactPageRoutes from './routes/contactPageRoutes';
+import contactSubmissionRoutes from './routes/contactSubmissionRoutes';
+import insightRoutes from './routes/insightRoutes';
+import aboutPageRoutes from './routes/aboutPageRoutes';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
@@ -20,10 +32,45 @@ app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
 
+// ============================================================
+// CORS CONFIGURATION - FIXED
+// ============================================================
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://ngenit-ai-services.vercel.app',
+    'https://ngenit-ai-backend.onrender.com',
+    process.env.CORS_ORIGIN,
+].filter(Boolean);
+
+console.log('🔓 CORS Origins:', allowedOrigins);
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.warn(`❌ CORS blocked: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Authorization'],
+    maxAge: 86400, // 24 hours
 }));
+
+// Alternative: Simple CORS for development
+if (process.env.NODE_ENV === 'development') {
+    app.use(cors({
+        origin: '*',
+        credentials: true,
+    }));
+}
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -68,6 +115,18 @@ app.get('/api/health', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/hero', heroRoutes);
 app.use('/api/trust-bar', trustBarRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/industries', industryRoutes);
+app.use('/api/usecases', useCaseRoutes);
+app.use('/api/outcomes', outcomeRoutes);
+app.use('/api/methodology', methodologyRoutes);
+app.use('/api/solutions', solutionRoutes);
+app.use('/api/why-ngen', whyNgenRoutes);
+app.use('/api/cta-banner', ctaBannerRoutes);
+app.use('/api/contact-page', contactPageRoutes);
+app.use('/api/contact-submissions', contactSubmissionRoutes);
+app.use('/api/insights', insightRoutes);
+app.use('/api/about-page', aboutPageRoutes);
 
 // Error Handler
 app.use(errorHandler);
