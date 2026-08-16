@@ -47,7 +47,6 @@ const HeroBannerSchema = new Schema<IHeroBanner>(
         buttonPrimaryLink: { type: String, required: true },
         buttonSecondary: { type: String, required: true },
         buttonSecondaryLink: { type: String, required: true },
-
         stats: {
             years: {
                 value: { type: String, required: true },
@@ -66,7 +65,6 @@ const HeroBannerSchema = new Schema<IHeroBanner>(
                 label: { type: String, required: true }
             }
         },
-
         dashboard: {
             title: { type: String, required: true },
             services: [
@@ -84,12 +82,10 @@ const HeroBannerSchema = new Schema<IHeroBanner>(
                 }
             ]
         },
-
         floatingCards: {
             left: { type: String, required: true },
             right: { type: String, required: true }
         },
-
         isActive: { type: Boolean, default: true },
     },
     { timestamps: true }

@@ -1,23 +1,23 @@
-import { Request, Response, NextFunction } from 'express';
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateLogin = exports.validateHeroBanner = exports.validate = void 0;
 // Helper function for validation errors
-const sendValidationError = (res: Response, field: string, message: string) => {
+const sendValidationError = (res, field, message) => {
     return res.status(400).json({
         success: false,
         errors: [{ field, message }],
     });
 };
-
 // Generic validation middleware
-export const validate = (req: Request, res: Response, next: NextFunction) => {
+const validate = (req, res, next) => {
+    // You can add general validation logic here if needed
     next();
 };
-
+exports.validate = validate;
 // Hero Banner validators
-export const validateHeroBanner = [
-    (req: Request, res: Response, next: NextFunction) => {
+exports.validateHeroBanner = [
+    (req, res, next) => {
         const { badge, title, highlightedText, subtitle, buttonPrimary, buttonPrimaryLink, buttonSecondary, buttonSecondaryLink } = req.body;
-        
         if (!badge?.trim()) {
             return sendValidationError(res, 'badge', 'Badge is required');
         }
@@ -45,12 +45,10 @@ export const validateHeroBanner = [
         next();
     }
 ];
-
 // Login validators
-export const validateLogin = [
-    (req: Request, res: Response, next: NextFunction) => {
+exports.validateLogin = [
+    (req, res, next) => {
         const { email, password } = req.body;
-        
         if (!email || !email.includes('@') || !email.includes('.')) {
             return sendValidationError(res, 'email', 'Valid email is required');
         }
@@ -60,28 +58,4 @@ export const validateLogin = [
         next();
     }
 ];
-
-// Trust Bar validators
-export const validateTrustBar = [
-    (req: Request, res: Response, next: NextFunction) => {
-        const { isEnabled, leftText, partners } = req.body;
-        
-        if (isEnabled !== undefined && typeof isEnabled !== 'boolean') {
-            return sendValidationError(res, 'isEnabled', 'isEnabled must be a boolean');
-        }
-        if (leftText !== undefined && !leftText?.trim()) {
-            return sendValidationError(res, 'leftText', 'Left text is required');
-        }
-        if (partners !== undefined && !Array.isArray(partners)) {
-            return sendValidationError(res, 'partners', 'Partners must be an array');
-        }
-        if (partners !== undefined) {
-            for (const partner of partners) {
-                if (!partner.name?.trim()) {
-                    return sendValidationError(res, 'partners', 'Partner name is required');
-                }
-            }
-        }
-        next();
-    }
-];
+//# sourceMappingURL=validation.js.map

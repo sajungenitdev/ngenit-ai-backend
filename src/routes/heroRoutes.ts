@@ -4,17 +4,22 @@ import {
     createHeroBanner,
     updateHeroBanner,
     toggleHeroBannerStatus,
+    resetHeroBanner,
     deleteHeroBanner,
 } from '../controllers/heroController';
-// import { authenticate } from '../middleware/auth'; // Comment out for now
+import { authenticate } from '../middleware/auth';
+import { validateHeroBanner } from '../middleware/validation';
 
 const router = Router();
 
-// All routes - public for testing
+// Public routes
 router.get('/', getHeroBanner);
-router.post('/', createHeroBanner);  // No auth
-router.put('/', updateHeroBanner);   // No auth
-router.put('/toggle-status', toggleHeroBannerStatus);
-router.delete('/', deleteHeroBanner);
+
+// Admin routes
+router.post('/', authenticate, validateHeroBanner, createHeroBanner);
+router.put('/', authenticate, validateHeroBanner, updateHeroBanner);
+router.put('/toggle-status', authenticate, toggleHeroBannerStatus);
+router.post('/reset', authenticate, resetHeroBanner);
+router.delete('/', authenticate, deleteHeroBanner);
 
 export default router;

@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load .env from root
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
@@ -29,14 +28,12 @@ export async function connectDB() {
     }
 
     if (!cached.promise) {
-        // REMOVE bufferCommands: false or set it to true
         const opts = {
             maxPoolSize: 10,
             serverSelectionTimeoutMS: 10000,
             socketTimeoutMS: 45000,
             retryWrites: true,
-            // Remove bufferCommands: false or set to true
-            bufferCommands: true, // ← Changed to true
+            bufferCommands: true,
         };
 
         console.log('📡 Connecting to MongoDB Atlas...');
