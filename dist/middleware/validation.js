@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateLogin = exports.validateHeroBanner = exports.validate = void 0;
+exports.validateTrustBar = exports.validateLogin = exports.validateHeroBanner = exports.validate = void 0;
 // Helper function for validation errors
 const sendValidationError = (res, field, message) => {
     return res.status(400).json({
@@ -10,7 +10,6 @@ const sendValidationError = (res, field, message) => {
 };
 // Generic validation middleware
 const validate = (req, res, next) => {
-    // You can add general validation logic here if needed
     next();
 };
 exports.validate = validate;
@@ -54,6 +53,29 @@ exports.validateLogin = [
         }
         if (!password || password.length < 6) {
             return sendValidationError(res, 'password', 'Password must be at least 6 characters');
+        }
+        next();
+    }
+];
+// Trust Bar validators
+exports.validateTrustBar = [
+    (req, res, next) => {
+        const { isEnabled, leftText, partners } = req.body;
+        if (isEnabled !== undefined && typeof isEnabled !== 'boolean') {
+            return sendValidationError(res, 'isEnabled', 'isEnabled must be a boolean');
+        }
+        if (leftText !== undefined && !leftText?.trim()) {
+            return sendValidationError(res, 'leftText', 'Left text is required');
+        }
+        if (partners !== undefined && !Array.isArray(partners)) {
+            return sendValidationError(res, 'partners', 'Partners must be an array');
+        }
+        if (partners !== undefined) {
+            for (const partner of partners) {
+                if (!partner.name?.trim()) {
+                    return sendValidationError(res, 'partners', 'Partner name is required');
+                }
+            }
         }
         next();
     }

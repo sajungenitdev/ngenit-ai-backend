@@ -1,10 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteHeroBanner = exports.toggleHeroBannerStatus = exports.updateHeroBanner = exports.createHeroBanner = exports.getHeroBanner = void 0;
+exports.deleteHeroBanner = exports.resetHeroBanner = exports.toggleHeroBannerStatus = exports.updateHeroBanner = exports.createHeroBanner = exports.getHeroBanner = void 0;
 const HeroBanner_1 = require("../models/HeroBanner");
-// ============================================================
-// GET - Fetch Hero Banner
-// ============================================================
 const getHeroBanner = async (req, res) => {
     try {
         let hero = await HeroBanner_1.HeroBanner.findOne();
@@ -28,12 +25,8 @@ const getHeroBanner = async (req, res) => {
     }
 };
 exports.getHeroBanner = getHeroBanner;
-// ============================================================
-// POST - Create Hero Banner (First Time)
-// ============================================================
 const createHeroBanner = async (req, res) => {
     try {
-        // Check if hero already exists
         const existing = await HeroBanner_1.HeroBanner.findOne();
         if (existing) {
             return res.status(400).json({
@@ -41,8 +34,7 @@ const createHeroBanner = async (req, res) => {
                 error: 'Hero banner already exists. Use PUT to update.',
             });
         }
-        const heroData = req.body;
-        const hero = await HeroBanner_1.HeroBanner.create(heroData);
+        const hero = await HeroBanner_1.HeroBanner.create(req.body);
         res.status(201).json({
             success: true,
             data: hero,
@@ -51,7 +43,6 @@ const createHeroBanner = async (req, res) => {
     }
     catch (error) {
         console.error('Create Hero Banner Error:', error);
-        // Validation error
         if (error.name === 'ValidationError') {
             const errors = Object.values(error.errors).map((e) => e.message);
             return res.status(400).json({
@@ -67,13 +58,8 @@ const createHeroBanner = async (req, res) => {
     }
 };
 exports.createHeroBanner = createHeroBanner;
-// ============================================================
-// PUT - Update Hero Banner (Full Update)
-// ============================================================
 const updateHeroBanner = async (req, res) => {
     try {
-        const updateData = req.body;
-        // Find existing hero
         let hero = await HeroBanner_1.HeroBanner.findOne();
         if (!hero) {
             return res.status(404).json({
@@ -81,14 +67,7 @@ const updateHeroBanner = async (req, res) => {
                 error: 'Hero banner not found. Please create one first.',
             });
         }
-        // Update all fields
-        const updated = await HeroBanner_1.HeroBanner.findByIdAndUpdate(hero._id, {
-            ...updateData,
-            updatedAt: new Date()
-        }, {
-            new: true,
-            runValidators: true
-        });
+        const updated = await HeroBanner_1.HeroBanner.findByIdAndUpdate(hero._id, { ...req.body, updatedAt: new Date() }, { new: true, runValidators: true });
         res.status(200).json({
             success: true,
             data: updated,
@@ -112,9 +91,6 @@ const updateHeroBanner = async (req, res) => {
     }
 };
 exports.updateHeroBanner = updateHeroBanner;
-// ============================================================
-// PUT - Partial Update (Status Toggle)
-// ============================================================
 const toggleHeroBannerStatus = async (req, res) => {
     try {
         const { isActive } = req.body;
@@ -141,9 +117,70 @@ const toggleHeroBannerStatus = async (req, res) => {
     }
 };
 exports.toggleHeroBannerStatus = toggleHeroBannerStatus;
-// ============================================================
-// DELETE - Delete Hero Banner (Optional)
-// ============================================================
+const resetHeroBanner = async (req, res) => {
+    try {
+        const defaultData = {
+            badge: '🚀 Practical AI for Business & Industry',
+            title: 'Practical AI Solutions for',
+            highlightedText: 'Business and Industry',
+            subtitle: 'We help organizations identify, develop and implement AI solutions that automate work, improve decision-making and create measurable operational value.',
+            buttonPrimary: 'Book an AI Consultation',
+            buttonPrimaryLink: '/contact',
+            buttonSecondary: 'Explore AI Services',
+            buttonSecondaryLink: '/services',
+            stats: {
+                years: { value: '16+', label: 'Years of Experience' },
+                markets: { value: '5', label: 'International Markets' },
+                partners: { value: '200+', label: 'Business Partners' },
+                clients: { value: '50+', label: 'Enterprise Clients' },
+            },
+            dashboard: {
+                title: 'NGEN IT AI Platform',
+                services: [
+                    { icon: '🧠', name: 'AI Consulting', tag: 'Strategy →' },
+                    { icon: '✨', name: 'Generative AI', tag: 'Deploy →' },
+                    { icon: '⚡', name: 'Automation', tag: 'Live →' },
+                    { icon: '📊', name: 'Analytics', tag: 'Insights →' },
+                ],
+                metrics: [
+                    { value: '40%', label: 'Cost Reduction', trend: '↑ Avg. Result' },
+                    { value: '3x', label: 'Faster Decisions', trend: '↑ Reported' },
+                    { value: '98%', label: 'Client Satisfaction', trend: '↑ Ongoing' },
+                ],
+            },
+            floatingCards: {
+                left: 'AI Automation Active',
+                right: 'New Enquiry Received',
+            },
+            isActive: true,
+        };
+        let hero = await HeroBanner_1.HeroBanner.findOne();
+        if (hero) {
+            const updated = await HeroBanner_1.HeroBanner.findByIdAndUpdate(hero._id, { ...defaultData, updatedAt: new Date() }, { new: true });
+            res.status(200).json({
+                success: true,
+                data: updated,
+                message: 'Hero banner reset to default successfully',
+            });
+        }
+        else {
+            const created = await HeroBanner_1.HeroBanner.create(defaultData);
+            res.status(201).json({
+                success: true,
+                data: created,
+                message: 'Hero banner created with default values',
+            });
+        }
+    }
+    catch (error) {
+        console.error('Reset Hero Banner Error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to reset hero banner',
+        });
+    }
+};
+exports.resetHeroBanner = resetHeroBanner;
 const deleteHeroBanner = async (req, res) => {
     try {
         const hero = await HeroBanner_1.HeroBanner.findOne();

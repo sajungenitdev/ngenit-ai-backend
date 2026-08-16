@@ -2,9 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTrustBar = exports.resetTrustBar = exports.toggleTrustBarStatus = exports.updateTrustBar = exports.createTrustBar = exports.getTrustBar = void 0;
 const TrustBar_1 = require("../models/TrustBar");
-// ============================================================
-// GET - Fetch Trust Bar
-// ============================================================
 const getTrustBar = async (req, res) => {
     try {
         let trustBar = await TrustBar_1.TrustBar.findOne();
@@ -28,12 +25,8 @@ const getTrustBar = async (req, res) => {
     }
 };
 exports.getTrustBar = getTrustBar;
-// ============================================================
-// POST - Create Trust Bar (First Time)
-// ============================================================
 const createTrustBar = async (req, res) => {
     try {
-        // Check if trust bar already exists
         const existing = await TrustBar_1.TrustBar.findOne();
         if (existing) {
             return res.status(400).json({
@@ -42,7 +35,6 @@ const createTrustBar = async (req, res) => {
             });
         }
         const trustBarData = req.body;
-        // Ensure partners have IDs if not provided
         if (trustBarData.partners) {
             trustBarData.partners = trustBarData.partners.map((p, index) => ({
                 ...p,
@@ -73,13 +65,8 @@ const createTrustBar = async (req, res) => {
     }
 };
 exports.createTrustBar = createTrustBar;
-// ============================================================
-// PUT - Update Trust Bar (Full Update)
-// ============================================================
 const updateTrustBar = async (req, res) => {
     try {
-        const updateData = req.body;
-        // Find existing trust bar
         let trustBar = await TrustBar_1.TrustBar.findOne();
         if (!trustBar) {
             return res.status(404).json({
@@ -87,21 +74,14 @@ const updateTrustBar = async (req, res) => {
                 error: 'Trust bar not found. Please create one first.',
             });
         }
-        // Ensure partners have IDs
+        const updateData = req.body;
         if (updateData.partners) {
             updateData.partners = updateData.partners.map((p, index) => ({
                 ...p,
                 id: p.id || (index + 1).toString(),
             }));
         }
-        // Update all fields
-        const updated = await TrustBar_1.TrustBar.findByIdAndUpdate(trustBar._id, {
-            ...updateData,
-            updatedAt: new Date()
-        }, {
-            new: true,
-            runValidators: true
-        });
+        const updated = await TrustBar_1.TrustBar.findByIdAndUpdate(trustBar._id, { ...updateData, updatedAt: new Date() }, { new: true, runValidators: true });
         res.status(200).json({
             success: true,
             data: updated,
@@ -125,9 +105,6 @@ const updateTrustBar = async (req, res) => {
     }
 };
 exports.updateTrustBar = updateTrustBar;
-// ============================================================
-// PUT - Toggle Trust Bar Status
-// ============================================================
 const toggleTrustBarStatus = async (req, res) => {
     try {
         const { isEnabled } = req.body;
@@ -154,21 +131,18 @@ const toggleTrustBarStatus = async (req, res) => {
     }
 };
 exports.toggleTrustBarStatus = toggleTrustBarStatus;
-// ============================================================
-// POST - Reset to Default
-// ============================================================
 const resetTrustBar = async (req, res) => {
     try {
         const defaultData = {
             isEnabled: true,
-            leftText: "Technology Ecosystem",
+            leftText: 'Technology Ecosystem',
             partners: [
-                { id: "1", name: "Microsoft Azure" },
-                { id: "2", name: "AWS" },
-                { id: "3", name: "Google Cloud" },
-                { id: "4", name: "OpenAI" },
-                { id: "5", name: "SAP" },
-                { id: "6", name: "Salesforce" },
+                { id: '1', name: 'Microsoft Azure' },
+                { id: '2', name: 'AWS' },
+                { id: '3', name: 'Google Cloud' },
+                { id: '4', name: 'OpenAI' },
+                { id: '5', name: 'SAP' },
+                { id: '6', name: 'Salesforce' },
             ],
         };
         let trustBar = await TrustBar_1.TrustBar.findOne();
@@ -198,9 +172,6 @@ const resetTrustBar = async (req, res) => {
     }
 };
 exports.resetTrustBar = resetTrustBar;
-// ============================================================
-// DELETE - Delete Trust Bar
-// ============================================================
 const deleteTrustBar = async (req, res) => {
     try {
         const trustBar = await TrustBar_1.TrustBar.findOne();
