@@ -1,16 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { validationResult, body, param, query } from 'express-validator';
-
-// Install express-validator if not installed
-// npm install express-validator
+import { body, validationResult } from 'express-validator';
 
 export const validate = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({
             success: false,
-            errors: errors.array().map((err) => ({
-                field: err.param,
+            errors: errors.array().map((err: any) => ({
+                field: err.path || err.param,
                 message: err.msg,
             })),
         });
@@ -18,7 +15,6 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
-// Hero Banner validators
 export const validateHeroBanner = [
     body('badge').optional().isString().trim(),
     body('title').optional().isString().trim(),
@@ -35,7 +31,6 @@ export const validateHeroBanner = [
     validate,
 ];
 
-// Login validators
 export const validateLogin = [
     body('email').isEmail().withMessage('Please provide a valid email'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
