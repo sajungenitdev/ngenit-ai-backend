@@ -2,11 +2,11 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IContactSubmission extends Document {
     name: string;
-    company: string;
+    company?: string; // ✅ Made optional
     email: string;
     phone: string;
-    country: string;
-    service: string;
+    country?: string; // ✅ Made optional
+    service?: string; // ✅ Made optional
     message: string;
     consent: boolean;
     status: 'pending' | 'contacted' | 'completed';
@@ -26,8 +26,9 @@ const ContactSubmissionSchema = new Schema<IContactSubmission>(
         },
         company: {
             type: String,
-            required: true,
+            required: false, // ✅ Changed to false
             trim: true,
+            default: '',
         },
         email: {
             type: String,
@@ -42,13 +43,15 @@ const ContactSubmissionSchema = new Schema<IContactSubmission>(
         },
         country: {
             type: String,
-            required: true,
+            required: false, // ✅ Changed to false
             trim: true,
+            default: '',
         },
         service: {
             type: String,
-            required: true,
+            required: false, // ✅ Changed to false
             trim: true,
+            default: '',
         },
         message: {
             type: String,
