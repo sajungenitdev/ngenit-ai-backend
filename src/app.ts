@@ -21,7 +21,12 @@ import contactPageRoutes from './routes/contactPageRoutes';
 import contactSubmissionRoutes from './routes/contactSubmissionRoutes';
 import insightRoutes from './routes/insightRoutes';
 import aboutPageRoutes from './routes/aboutPageRoutes';
+import cookiePolicyroutes from "./routes/cookiePolicyroutes";
+import privacyPolicyRoutes from "./routes/privacyPolicyRoutes";
+import termsConditionsRoutes from "./routes/termsConditionsRoutes";
 import { errorHandler } from './middleware/errorHandler';
+
+// Register routes
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
@@ -127,6 +132,9 @@ app.use('/api/contact-page', contactPageRoutes);
 app.use('/api/contact-submissions', contactSubmissionRoutes);
 app.use('/api/insights', insightRoutes);
 app.use('/api/about-page', aboutPageRoutes);
+app.use("/api/cookie-policy", cookiePolicyroutes);
+app.use("/api/privacy-policy", privacyPolicyRoutes);
+app.use("/api/terms-conditions", termsConditionsRoutes);
 
 // Error Handler
 app.use(errorHandler);
